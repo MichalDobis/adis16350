@@ -1,0 +1,4 @@
+uint8 reg
+uint16 data
+---
+bool success

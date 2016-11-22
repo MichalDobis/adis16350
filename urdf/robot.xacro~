@@ -1,0 +1,46 @@
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rameno_jednoduche">
+
+<xacro:property name="sirka" value=".05" />
+<xacro:property name="vyska" value=".3" />
+
+<xacro:macro name="default_inertial" params="mass">
+  <inertial>
+    <mass value="${mass}" />
+    <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+  </inertial> 
+</xacro:macro>
+
+<link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${sirka} ${sirka} ${sirka}"/>
+      </geometry>
+       <material name="biela">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <xacro:default_inertial mass="50"/>
+  </link>
+
+   <link name="link1">
+    <visual>
+      <geometry>
+        <cylinder length="${vyska}" radius = "${sirka/5}"/>
+      </geometry>
+       <material name="modra">
+        <color rgba="0.1 0.1 1 1"/>
+      </material>
+       <origin xyz="0 0 ${vyska/2}" rpy = "0 0 0"/>
+    </visual>
+    <xacro:default_inertial mass="10"/>
+  </link>
+  
+  <joint name="base_link_joint" type="revolute">
+   <axis xyz="0 1 0"/>
+    <parent link="base_link"/>
+    <child link="link1"/>
+     <origin xyz="0 0 0" rpy = "0 0 0"/>
+      <limit effort="1000.0" lower="-1.62" upper="1.62" velocity="0.5"/>
+  </joint>
+  </robot>

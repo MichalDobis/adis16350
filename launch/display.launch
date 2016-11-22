@@ -1,0 +1,7 @@
+<launch>
+	<rosparam command="load" file="$(find adis16350)/config/adis_parameters.yaml" />
+	<param name="robot_description" textfile="$(find adis16350)/urdf/adis16350.urdf" />
+	<node name="adis_broadcaster" pkg="adis16350" type="adis_broadcaster" ns="adis16350"/>
+	<node name="adis16350_node" pkg="adis16350" type="adis16350_node" ns="adis16350" output="screen"/>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find adis16350)/rviz_conf.rviz" required="true" />
+</launch>
