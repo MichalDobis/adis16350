@@ -53,5 +53,6 @@ adis16350:
  using_akcel: 0.02
  use_moving_average: True
  data_topic_name: imu_data
+ frame_id: imu
  status_period: 0.5
  publish_rate: 150

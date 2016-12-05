@@ -10,9 +10,10 @@ adis16350:
  #nastavenia zakladnych registrov
  
  #povolit zapis do registrov pri starte, kvoli flash pamati je vhodne mat zapnute na false pri viacnasobnom zapinani
+ #ak bude false, tak sa pri inite nebude zapisovat do registrov. Pouzitim kalibracnych servisov je mozne zapisovat.
  enable_write_to_registers: false
  
- #register SENS_AVG 0x38 0x39
+ #register SENS_AVG 0x38 0x39  - zapis pri inite
  digital_filtering: 6 #rozsah 0-6
                       #sin ( π × N × f × t s )/N × sin ( π × f × t s ), N - filter taps
                       #N = 2^M, priklad pre hodnotu 3 N = 2^3 = 8 filter taps
@@ -20,19 +21,19 @@ adis16350:
                       #2 - 150°/s, filter taps ≥ 4
                       #3 - 300°/s (default condition)
 
- #register SMPL_PRD 0x36 0x37                                        
+ #register SMPL_PRD 0x36 0x37 - zapis pri inite                                        
  sample_rate: 1    #Ts = Tb * (Ns + 1); rozsah 0-15
                    #pre 0-7 Tb = 0.61035 ms a Ns = hodnota z parametra
                    #pre  8-15 Tb = 18.921 ms a Ns = hodnota z parametra - 7
                    #priklad pre hodnotu 1 bude Ts = 0.61053 * (1 + 1)
                    
- #register MSC_CTRL 0x34 0x35
+ #register MSC_CTRL 0x34 0x35 - zapis pri inite
  msc_ctrl: 0 #0 - nic
              #1 - Linear accelerometer origin alignment
              #2 - Linear acceleration bias compensation for gyroscopes
              #3 - vsetko
              
- #kalibracia
+ #kalibracia - zapis pri inite
  calibration_type: 0 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
                      #0 - ziadna kalibracia
                      #0. bit = 1 - pouzije sa auto kalibracia (kratka)
@@ -52,5 +53,6 @@ adis16350:
  using_akcel: 0.02
  use_moving_average: True
  data_topic_name: imu_data
+ frame_id: adis
  status_period: 0.5
  publish_rate: 150

@@ -55,7 +55,6 @@ public:
 
 		operations = new MathematicsOperations();
 
-		n.param<double>("status_period", status_period, 1);
 
 		std::vector <double> pose_covariance_diagonal;
 		std::vector <double> angular_velocity_covariance_diagonal;
@@ -65,9 +64,14 @@ public:
 		n.getParam("angular_velocity_covariance_diagonal", angular_velocity_covariance_diagonal);
 		n.getParam("linear_acceleration_covariance_diagonal", linear_acceleration_covariance_diagonal);
 
+		std::string frame;
+		n.param<std::string>("frame_id", frame, "imu");
+
+		imu.header.frame_id = frame;
 		operations->createCovarianceMatrix(&imu, pose_covariance_diagonal, angular_velocity_covariance_diagonal, linear_acceleration_covariance_diagonal);
 	    operations->setComplementaryFilterParams(usingGyro, usingAkcel);
 
+	    n.param<double>("status_period", status_period, 1);
     	status_timer = n.createTimer(ros::Duration(status_period), &Adis16350::timerCallback, this); //citanie prebieha periodickym spustanim casovaca
 
 		if (!adis->init(port, baud)){
