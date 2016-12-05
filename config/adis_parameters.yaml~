@@ -9,6 +9,9 @@ adis16350:
  
  #nastavenia zakladnych registrov
  
+ #povolit zapis do registrov pri starte, kvoli flash pamati je vhodne mat zapnute na false pri viacnasobnom zapinani
+ enable_write_to_registers: false
+ 
  #register SENS_AVG 0x38 0x39
  digital_filtering: 6 #rozsah 0-6
                       #sin ( π × N × f × t s )/N × sin ( π × f × t s ), N - filter taps
@@ -41,7 +44,7 @@ adis16350:
  #covariance matrix (diagonal)
  pose_covariance_diagonal : [0.00001, 0.00001, 0.00005]
  angular_velocity_covariance_diagonal: [0.0001, 0.0001, 0.0005]
- linear_acceleration_covariance_diagonal : [5, 0.005, 100000]
+ linear_acceleration_covariance_diagonal : [0.005, 0.005, 100000]
 
  #parametre pre softver  
  use_complementary_filter: True

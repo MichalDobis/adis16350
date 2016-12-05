@@ -195,6 +195,12 @@ private:
 
 		ros::NodeHandle n;
 
+		bool enable_write_to_registers;
+		n.param<int>("enable_write_to_registers", enable_write_to_registers);
+
+		if (!enable_write_to_registers)
+			return false;
+
 		int avg, range, smpl, msc, calibration_type;
 		n.param<int>("digital_filtering", avg, 6);
 		n.param<int>("range", range, 3);
