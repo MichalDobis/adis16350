@@ -3,6 +3,6 @@
 	<!--ovladac robota MotorBoards, MainBoard a ciastocne SensorBoard-->
 	<!--env name="ROS_IP" value="192.168.100.6"/-->
 	<rosparam command="load" file="$(find adis16350)/config/adis_parameters.yaml" />
-	<node name="adis16350" pkg="adis1635-" type="adis16350_node" ns="adis16350"/>
+	<node name="adis16350" pkg="adis16350" type="adis16350_node" ns="adis16350"/>
 		
 </launch>

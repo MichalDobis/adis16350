@@ -7,7 +7,6 @@ adis16350:
  parity: 0       #0 - none #1 - odd parity #2 - even parity
  byte_size: 8    #5 - fivebits #6 - sixbits #7 - sevenbits #8 eightbits
  
- 
  #nastavenia zakladnych registrov
  
  #register SENS_AVG 0x38 0x39
@@ -25,20 +24,26 @@ adis16350:
                    #priklad pre hodnotu 1 bude Ts = 0.61053 * (1 + 1)
                    
  #register MSC_CTRL 0x34 0x35
- msc_ctrl: 3 #0 - nic
+ msc_ctrl: 0 #0 - nic
              #1 - Linear accelerometer origin alignment
              #2 - Linear acceleration bias compensation for gyroscopes
              #3 - vsetko
              
  #kalibracia
- calibration_type: 5 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
+ calibration_type: 0 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
                      #0 - ziadna kalibracia
                      #0. bit = 1 - pouzije sa auto kalibracia (kratka)
                      #1. bit = 1 - pouzije sa precisna kalibracia (dlha - treba nechat senzor cca 30 sekund vklude)
                      #2. bit = 1 - 2000 krat sa precita vzorka z Gyra Z a vypocita sa offset, ktory sa zapise do registra ZGYRO_OFF (asi najpresnejsie)
                      #nastavenim viacerych bitov na 1 je mozne kombinovat. Napr. pre hodnotu 5 (binarne 101) sa spusti kratka kalibracia a nasledne kalibracia Z gyra.
                      
- #parametre pre softver 
+
+ #covariance matrix (diagonal)
+ pose_covariance_diagonal : [0.00001, 0.00001, 0.00005]
+ angular_velocity_covariance_diagonal: [0.0001, 0.0001, 0.0005]
+ linear_acceleration_covariance_diagonal : [5, 0.005, 100000]
+
+ #parametre pre softver  
  use_complementary_filter: True
  using_gyro: 0.98
  using_akcel: 0.02

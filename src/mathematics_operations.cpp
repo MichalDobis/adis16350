@@ -20,6 +20,7 @@ void MathematicsOperations::setComplementaryFilterParams(double usingGyroPercent
 	this->usingAkcelPercentage = usingAkcelPercentage;
 }
 
+
 geometry_msgs::Vector3 MathematicsOperations::computeOrientationFromGyro(sensor_msgs::Imu *imu){
 
 	if (!wasFirstMeasurement){
@@ -89,5 +90,19 @@ void MathematicsOperations::createCovarianceMatrix(sensor_msgs::Imu *imu){
 	imu->orientation_covariance[8] = 0.00005;
 }
 
+void MathematicsOperations::createCovarianceMatrix(sensor_msgs::Imu *imu, std::vector<double> pose, std::vector<double> angular_velocity, std::vector<double> linear_acceleration){
+
+	imu->linear_acceleration_covariance[0] = linear_acceleration[0];
+	imu->linear_acceleration_covariance[4] = linear_acceleration[1];
+	imu->linear_acceleration_covariance[8] = linear_acceleration[2];
+
+	imu->angular_velocity_covariance[0] = angular_velocity[0];
+	imu->angular_velocity_covariance[4] = angular_velocity[1];
+	imu->angular_velocity_covariance[8] = angular_velocity[2];
+
+	imu->orientation_covariance[0] = pose[0];
+	imu->orientation_covariance[4] = pose[1];
+	imu->orientation_covariance[8] = pose[2];
+}
 
 
