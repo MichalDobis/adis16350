@@ -1,7 +1,7 @@
 adis16350:
 
 #komunikacne parametre
- port_name: /dev/ttyUSB0
+ port_name: /dev/ttyUSB1
  baudrate: 115200
  stop_bits: 1    #1 - stopBits 1  #2 - stopBits 2 #3 - stopBits 1.5 
  parity: 0       #0 - none #1 - odd parity #2 - even parity
@@ -51,7 +51,7 @@ adis16350:
  use_complementary_filter: True
  using_gyro: 0.98
  using_akcel: 0.02
- use_moving_average: True
+ use_moving_average: False
  data_topic_name: imu_data
  frame_id: imu
  status_period: 0.5

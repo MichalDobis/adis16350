@@ -7,6 +7,7 @@ AdisInterface::AdisInterface(){
 	SCALE_GYRO = 0.07326;
 }
 
+//init komunikacie
 bool AdisInterface::init(std::string port, int baud){
 
 	if (!active){
@@ -25,6 +26,7 @@ bool AdisInterface::init(std::string port, int baud){
 	return true;
 }
 
+//register pre filter a rozsah
 bool AdisInterface::setSENS_AVG(uint8_t SENS, uint8_t AVG){
 
 	mutex.lock();
@@ -38,6 +40,7 @@ bool AdisInterface::setSENS_AVG(uint8_t SENS, uint8_t AVG){
 	return success;
 }
 
+//register pre frekvenciu vzorkovania v adise
 bool AdisInterface::setSMPL_PRD(uint8_t SMPL){
 
 	mutex.lock();
@@ -50,6 +53,7 @@ bool AdisInterface::setSMPL_PRD(uint8_t SMPL){
 	return success;
 }
 
+//register msc_ctrl
 bool AdisInterface::setMSC_CTRL(uint8_t MSC){
 
 	mutex.lock();
@@ -62,6 +66,7 @@ bool AdisInterface::setMSC_CTRL(uint8_t MSC){
 	return success;
 }
 
+//citanie statusu
 uint16_t AdisInterface::getStatus(STATUS_STRUCT *status){
 
 	uint8_t data[] = {0x00,0x00};
@@ -96,6 +101,7 @@ uint16_t AdisInterface::getStatus(STATUS_STRUCT *status){
 	return ((uint16_t)data[0] << 8) | data[1];
 }
 
+//citanie lubovolneho registra
 uint16_t AdisInterface::readRegister(uint8_t reg){
 
 	uint8_t read_data[] = {0x00, 0x00};
@@ -121,6 +127,7 @@ bool AdisInterface::writeRegister(uint8_t reg, uint16_t data){
 }
 
 
+//zmaze offsety z registrov
 bool AdisInterface::restoringCalibration(){
 
 	mutex.lock();
@@ -132,6 +139,7 @@ bool AdisInterface::restoringCalibration(){
 	return success;
 }
 
+//kratka kalibracia
 bool AdisInterface::autoCalibrate(){
 
 	calibrationRunning.lock();
@@ -148,6 +156,7 @@ bool AdisInterface::autoCalibrate(){
 	return success;
 }
 
+//dlha kalibracia
 bool AdisInterface::calibrate(){
 
 	calibrationRunning.lock();
@@ -165,6 +174,7 @@ bool AdisInterface::calibrate(){
 	return success;
 }
 
+//precita offset z registra GYRO_Z, zrata 2000 vzoriek a vypocita priemer, podla ktoreho zmeni offset v GYRO_Z
 bool AdisInterface::calibrationGyroZ(){
 
 	ROS_WARN("ADIS16350: prebieha kalibracia nehybat 30 sekund zo zoriadenim");
@@ -198,6 +208,7 @@ bool AdisInterface::calibrationGyroZ(){
 
 }
 
+//vracia cez smernik IMU data
 bool AdisInterface::getImuData(sensor_msgs::Imu *imu){
 
 	if (!mutex.try_lock())
@@ -217,6 +228,7 @@ int AdisInterface::getRange(){
 	return range;
 }
 
+//malo by zistovat teplotu, ale nefunguje
 geometry_msgs::Vector3 AdisInterface::getTemperature(){
 
 	geometry_msgs::Vector3 temperature;
@@ -381,6 +393,7 @@ bool AdisInterface::readRegister(uint8_t reg, uint8_t *read_data){
 		return true;
 }
 
+//kontrola ci, zadavane data na zapis boli naozaj zapisane
 bool AdisInterface::checkRegister(uint8_t reg, uint8_t *controlled_data){
 
 	uint8_t read_data[] = {0x00, 0x00};

@@ -39,7 +39,7 @@ public:
 		diagnostic_.setHardwareID("none");
 
 		imuPub = n.advertise<sensor_msgs::Imu>(topicName,100);
-		imuPubTest = n.advertise<sensor_msgs::Imu>("test",100);
+		//imuPubTest = n.advertise<sensor_msgs::Imu>("test",100);
 
 		serviceGetAngleZ = n.advertiseService("get_angle", &Adis16350::getAngleZSrv, this);
 		serviceInit = n.advertiseService("init", &Adis16350::initSrv, this);
@@ -51,7 +51,6 @@ public:
 		serviceRestoringCalibrate = n.advertiseService("restoring_calibrate",&Adis16350::restoringCalibrationSrv, this);
 
 		adis = new AdisInterface();
-		ROS_WARN("adis sa bude nastavovat idealne ho umiestnit rovnobezne so zemou, nehybat");
 
 		operations = new MathematicsOperations();
 
@@ -83,25 +82,27 @@ public:
 
 	void readAndPublish(){
 
-		adis->getImuData(&imu);
+		if (adis->getImuData(&imu)){
 
-		imuWithoutAverage = imu;
-		imuPubTest.publish(imuWithoutAverage);
 
-		if (useMovingAverage){				//ak sa ma pocitat plavajuci priemer, tak sa musi vytvorit buffer vzoriek
-				addSample(imu);
+			//imuWithoutAverage = imu;
+			//imuPubTest.publish(imuWithoutAverage);
 
-				if (!computeAverage(&imu))//funkcia zistuje ci je uz buffer vyplneny, ak nie je nemoze sa pocitat priemer, preto retun;
-					return;
-			}
+			if (useMovingAverage){				//ak sa ma pocitat plavajuci priemer, tak sa musi vytvorit buffer vzoriek
+					addSample(imu);
 
-		vector = operations->computeOrientationFromGyro(&imu);
+					if (!computeAverage(&imu))//funkcia zistuje ci je uz buffer vyplneny, ak nie je nemoze sa pocitat priemer, preto retun;
+						return;
+				}
 
-		if (useComplementary)
-			operations->computeComplementary(imu);
+			vector = operations->computeOrientationFromGyro(&imu);
 
-		imu.orientation = operations->createQuaternion();
-		imuPub.publish(imu);
+			if (useComplementary)
+				operations->computeComplementary(imu);
+
+			imu.orientation = operations->createQuaternion();
+			imuPub.publish(imu);
+		}
 	}
 
 private:
@@ -130,7 +131,7 @@ private:
 	ros::ServiceServer serviceRestoringCalibrate;
 
 	ros::Publisher imuPub;
-	ros::Publisher imuPubTest;
+	//ros::Publisher imuPubTest;
 
 	ros::Timer status_timer;
 	AdisInterface::STATUS_STRUCT status;
@@ -200,10 +201,15 @@ private:
 		ros::NodeHandle n;
 
 		bool enable_write_to_registers;
-		n.param<int>("enable_write_to_registers", enable_write_to_registers);
+		n.getParam("enable_write_to_registers", enable_write_to_registers);
 
 		if (!enable_write_to_registers)
 			return false;
+
+		ROS_WARN("adis sa bude nastavovat idealne ho umiestnit rovnobezne so zemou, nehybat");
+
+		while (!adis->getImuData(&imu));  //neviem, preco ale prve citania byvaju neuspesne, tak
+										 //citam vzorky az kym nepride uspesne citanie.
 
 		int avg, range, smpl, msc, calibration_type;
 		n.param<int>("digital_filtering", avg, 6);
@@ -211,7 +217,6 @@ private:
 		n.param<int>("sample_rate", smpl, 1);
 		n.param<int>("msc_ctrl", msc, 0);
 		n.param<int>("calibration_type", calibration_type, 1);
-
 
 		if (avg > 6)
 			avg = 6;
@@ -272,7 +277,6 @@ private:
 
 	bool initSrv(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res){
 
-		ROS_WARN("adis sa bude nastavovat idealne ho umiestnit rovnobezne so zemou, nehybat");
 		ros::NodeHandle n;
 		std::string port;
 		int baud;
