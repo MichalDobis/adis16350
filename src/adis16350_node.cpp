@@ -74,7 +74,6 @@ public:
     	status_timer = n.createTimer(ros::Duration(status_period), &Adis16350::timerCallback, this); //citanie prebieha periodickym spustanim casovaca
 
 		if (!adis->init(port, baud)){
-			ROS_ERROR("ADIS16350: adis port not open");
 			return;
 		}
 			initControllRegisters();
