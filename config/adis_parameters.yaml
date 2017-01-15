@@ -1,6 +1,6 @@
 adis16350:
 
-#komunikacne parametre
+#communication parameters
  port_name: /dev/ttyUSB1
  baudrate: 115200
  stop_bits: 1    #1 - stopBits 1  #2 - stopBits 2 #3 - stopBits 1.5 
@@ -14,7 +14,7 @@ adis16350:
  enable_write_to_registers: false
  
  #register SENS_AVG 0x38 0x39  - zapis pri inite
- digital_filtering: 6 #rozsah 0-6
+ digital_filtering: 6 #range 0-6
                       #sin ( π × N × f × t s )/N × sin ( π × f × t s ), N - filter taps
                       #N = 2^M, priklad pre hodnotu 3 N = 2^3 = 8 filter taps
  range: 3             #1 - 75°/s, filter taps ≥ 16
@@ -47,7 +47,7 @@ adis16350:
  angular_velocity_covariance_diagonal: [0.0001, 0.0001, 0.0005]
  linear_acceleration_covariance_diagonal : [0.005, 0.005, 100000]
 
- #parametre pre softver  
+ #parameters for softver
  use_complementary_filter: True
  using_gyro: 0.98
  using_akcel: 0.02

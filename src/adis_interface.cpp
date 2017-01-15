@@ -15,7 +15,7 @@ bool AdisInterface::init(std::string port, int baud){
 		my_serial = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(100));
 
 		}catch (std::exception& e){
-			ROS_ERROR("ADIS16350: port not open: %s", e.what());
+			ROS_ERROR("ADIS16350: port don't open: %s", e.what());
 			active = false;
 			return false;
 		}
