@@ -297,14 +297,14 @@ bool AdisInterface::readAxes(sensor_msgs::Imu *imu){
 
 		if (count != 1){
 
-			ROS_ERROR("ADIS16350: read axes: zly pocet zapisanych bytov %d", count);
+			//ROS_ERROR("ADIS16350: read axes: zly pocet zapisanych bytov %d", count);
 			return false;
 		}
 		count = my_serial->read(read_data,12);
 
 		if (count != 12){
 
-			ROS_ERROR("ADIS16350: read axes: zly pocet precitanych bytov %d", count);
+			//ROS_ERROR("ADIS16350: read axes: zly pocet precitanych bytov %d", count);
 			return false;
 		}
 

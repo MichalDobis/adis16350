@@ -1,7 +1,7 @@
 adis16350:
 
 #komunikacne parametre
- port_name: /dev/ttyUSB1
+ port_name: /dev/ADIS
  baudrate: 115200
  stop_bits: 1    #1 - stopBits 1  #2 - stopBits 2 #3 - stopBits 1.5 
  parity: 0       #0 - none #1 - odd parity #2 - even parity
@@ -11,7 +11,7 @@ adis16350:
  
  #povolit zapis do registrov pri starte, kvoli flash pamati je vhodne mat zapnute na false pri viacnasobnom zapinani
  #ak bude false, tak sa pri inite nebude zapisovat do registrov. Pouzitim kalibracnych servisov je mozne zapisovat.
- enable_write_to_registers: false
+ enable_write_to_registers: true
  
  #register SENS_AVG 0x38 0x39  - zapis pri inite
  digital_filtering: 6 #rozsah 0-6
@@ -34,7 +34,7 @@ adis16350:
              #3 - vsetko
              
  #kalibracia - zapis pri inite
- calibration_type: 0 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
+ calibration_type: 2 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
                      #0 - ziadna kalibracia
                      #0. bit = 1 - pouzije sa auto kalibracia (kratka)
                      #1. bit = 1 - pouzije sa precisna kalibracia (dlha - treba nechat senzor cca 30 sekund vklude)
