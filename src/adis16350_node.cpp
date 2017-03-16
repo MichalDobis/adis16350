@@ -41,7 +41,6 @@ public:
 		imuPub = n.advertise<sensor_msgs::Imu>(topicName,100);
 		//imuPubTest = n.advertise<sensor_msgs::Imu>("test",100);
 
-		serviceGetAngleZ = n.advertiseService("get_angle", &Adis16350::getAngleZSrv, this);
 		serviceInit = n.advertiseService("init", &Adis16350::initSrv, this);
 		serviceWrite = n.advertiseService("write", &Adis16350::writeSrv, this);
 		serviceRead = n.advertiseService("read", &Adis16350::readSrv, this);
@@ -55,9 +54,9 @@ public:
 		operations = new MathematicsOperations();
 
 
-		std::vector <double> pose_covariance_diagonal;
-		std::vector <double> angular_velocity_covariance_diagonal;
-		std::vector <double> linear_acceleration_covariance_diagonal;
+		std::vector <double> pose_covariance_diagonal(3);
+		std::vector <double> angular_velocity_covariance_diagonal(3);
+		std::vector <double> linear_acceleration_covariance_diagonal(3);
 
 		n.getParam("pose_covariance_diagonal", pose_covariance_diagonal);
 		n.getParam("angular_velocity_covariance_diagonal", angular_velocity_covariance_diagonal);
@@ -74,7 +73,6 @@ public:
     	status_timer = n.createTimer(ros::Duration(status_period), &Adis16350::timerCallback, this); //citanie prebieha periodickym spustanim casovaca
 
 		if (!adis->init(port, baud)){
-			ROS_ERROR("ADIS16350: adis port not open");
 			return;
 		}
 			initControllRegisters();
@@ -121,7 +119,6 @@ private:
 	bool runningCalibration;
 	boost::mutex mutex;
 
-	ros::ServiceServer serviceGetAngleZ;
 	ros::ServiceServer serviceZGyroCalibrate;
 	ros::ServiceServer serviceInit;
 	ros::ServiceServer serviceWrite;
@@ -391,13 +388,6 @@ private:
 		diagnostic_.update();
 	}
 
-	bool getAngleZSrv(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res){
-
-	ROS_ERROR("angle Z %f",operations->getOrientation().z);
-			res.success = true;
-
-		return true;
-	}
 };
 
 
