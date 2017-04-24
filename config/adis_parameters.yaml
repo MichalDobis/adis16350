@@ -35,16 +35,18 @@ adis16350:
              #3 - vsetko
              
  #kalibracia - zapis pri inite
- calibration_type: 2 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
+ calibration_type: 0 #zaporne cislo, zmaze nastaveni offset na Z gyro a nebude nic kalibrovat
                      #0 - ziadna kalibracia
                      #0. bit = 1 - pouzije sa auto kalibracia (kratka)
                      #1. bit = 1 - pouzije sa precisna kalibracia (dlha - treba nechat senzor cca 30 sekund vklude)
                      #2. bit = 1 - 2000 krat sa precita vzorka z Gyra Z a vypocita sa offset, ktory sa zapise do registra ZGYRO_OFF (asi najpresnejsie)
                      #nastavenim viacerych bitov na 1 je mozne kombinovat. Napr. pre hodnotu 5 (binarne 101) sa spusti kratka kalibracia a nasledne kalibracia Z gyra.
+
+ compute_z_offset: true
                      
 
  #covariance matrix (diagonal)
- pose_covariance_diagonal : [0.00001, 0.00001, 0.00005]
+ pose_covariance_diagonal : [0.00001, 0.00001, 0.0005]
  angular_velocity_covariance_diagonal: [0.0001, 0.0001, 0.0005]
  linear_acceleration_covariance_diagonal : [0.005, 0.005, 100000]
 

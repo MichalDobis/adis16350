@@ -9,7 +9,6 @@ class MathematicsOperations {
 
 public:
 	const static double PI2 = 2 * M_PI;
-	const static double PI_05 = M_PI / 180;
 	MathematicsOperations();
 	MathematicsOperations(double usingGyroPercentage, double usingAkcelPercentage);
 	geometry_msgs::Vector3 computeOrientationFromGyro(sensor_msgs::Imu *imu);

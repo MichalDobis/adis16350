@@ -19,6 +19,7 @@ public:
 		std::string topicName;
 		double usingGyro, usingAkcel;
 		double status_period;
+		compute_z_offset = false;
 
 		int statusCode = 1;
 		bool runningCalibration = false;
@@ -34,6 +35,7 @@ public:
 		n.param<double>("using_gyro", usingGyro, 0.98);
 		n.param<double>("using_akcel", usingAkcel, 0.02);
 		n.param<double>("status_period", status_period, 1);
+		n.param<bool>("compute_z_offset", compute_z_offset, 1);
 
 		diagnostic_.add("Wsg_50 Status", this, &Adis16350::diagnostics);
 		diagnostic_.setHardwareID("none");
@@ -48,6 +50,7 @@ public:
 		serviceAutoCalibrate = n.advertiseService("auto_calibrate", &Adis16350::autoCalibrateSrv, this);
 		serviceZGyroCalibrate = n.advertiseService("z_gyro_calibrate", &Adis16350::zGyroCalibrateSrv, this);
 		serviceRestoringCalibrate = n.advertiseService("restoring_calibrate",&Adis16350::restoringCalibrationSrv, this);
+		serviceComputeOffset = n.advertiseService("compute_offset",&Adis16350::computeOffsetSrv, this);
 
 		adis = new AdisInterface();
 
@@ -76,6 +79,7 @@ public:
 			return;
 		}
 			initControllRegisters();
+
 	}
 
 	void readAndPublish(){
@@ -114,6 +118,8 @@ private:
 
 	bool useComplementary;
 	bool useMovingAverage;
+	bool compute_z_offset;
+
 
 	int statusCode;
 	bool runningCalibration;
@@ -126,6 +132,8 @@ private:
 	ros::ServiceServer serviceCalibrate;
 	ros::ServiceServer serviceAutoCalibrate;
 	ros::ServiceServer serviceRestoringCalibrate;
+	ros::ServiceServer serviceComputeOffset;
+
 
 	ros::Publisher imuPub;
 	//ros::Publisher imuPubTest;
@@ -256,6 +264,9 @@ private:
 				diagnostic_.force_update();
 		}
 
+		if (compute_z_offset)
+			adis->computeOffset();
+
 		if (!adis->setSENS_AVG(uint8_t (range), uint8_t(avg))){
 			ROS_ERROR("ADIS16350: initial failed in init registers");
 			return false;
@@ -367,6 +378,18 @@ private:
 		return true;
 	}
 
+	bool computeOffsetSrv(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res){
+
+		runningCalibration = true;
+		diagnostic_.force_update();
+
+		adis->computeOffset();
+
+		runningCalibration = false;
+		diagnostic_.force_update();
+
+		return true;
+	}
 
 	bool restoringCalibrationSrv(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res){
 

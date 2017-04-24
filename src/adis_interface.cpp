@@ -5,6 +5,7 @@ AdisInterface::AdisInterface(){
 	active = false;
 	SCALE_AKCEL = 0.002522 * GRAVITY;
 	SCALE_GYRO = 0.07326;
+	z_offset = 0;
 }
 
 //init komunikacie
@@ -130,6 +131,8 @@ bool AdisInterface::writeRegister(uint8_t reg, uint16_t data){
 //zmaze offsety z registrov
 bool AdisInterface::restoringCalibration(){
 
+	z_offset = 0;
+
 	mutex.lock();
 	bool success = writeRegister(COMMAND, 0x00, 0x02);
 	mutex.unlock();
@@ -141,6 +144,8 @@ bool AdisInterface::restoringCalibration(){
 
 //kratka kalibracia
 bool AdisInterface::autoCalibrate(){
+
+	z_offset = 0;
 
 	calibrationRunning.lock();
 	mutex.lock();
@@ -159,6 +164,8 @@ bool AdisInterface::autoCalibrate(){
 //dlha kalibracia
 bool AdisInterface::calibrate(){
 
+	z_offset = 0;
+
 	calibrationRunning.lock();
 	mutex.lock();
 	ROS_WARN("ADIS16350: prebieha kalibracia nehybat 30 sekund zo zoriadenim");
@@ -175,24 +182,34 @@ bool AdisInterface::calibrate(){
 }
 
 //precita offset z registra GYRO_Z, zrata 2000 vzoriek a vypocita priemer, podla ktoreho zmeni offset v GYRO_Z
-bool AdisInterface::calibrationGyroZ(){
+double AdisInterface::meassureAverageZ(){
 
-	ROS_WARN("ADIS16350: prebieha kalibracia nehybat 30 sekund zo zoriadenim");
-	sleep(2);
-	uint16_t offset = readRegister(ZGYRO_OFF);
 	sensor_msgs::Imu imu;
+
 	double z = 0;
 	int i = 0;
-	calibrationRunning.lock();
-	mutex.lock();
 	for (i = 0; i < 2000; i++){
 		if (readAxes(&imu))
 			z += imu.angular_velocity.z;
-		else i--;
-	}
+			else i--;
+		}
 
 	z /= i;
-	z /= 0.018315;  //Datasheet: Scale = 0.018315°/s per LSB
+	return z;
+}
+
+bool AdisInterface::calibrationGyroZ(){
+
+	z_offset = 0;
+
+	ROS_WARN("ADIS16350: prebieha kalibracia nehybat 30 sekund zo zoriadenim");
+	sleep(2);
+
+	calibrationRunning.lock();
+	mutex.lock();
+	uint16_t offset = readRegister(ZGYRO_OFF);
+
+	double z = meassureAverageZ()/DEG2RAG(0.018315);  //Datasheet: Scale = 0.018315°/s per LSB
 	offset -= z;
 
 	bool success = true;
@@ -208,6 +225,22 @@ bool AdisInterface::calibrationGyroZ(){
 
 }
 
+bool AdisInterface::computeOffset(){
+
+	ROS_WARN("ADIS16350: prebieha kalibracia nehybat 30 sekund zo zoriadenim");
+	sleep(2);
+
+	calibrationRunning.lock();
+	mutex.lock();
+
+	z_offset = meassureAverageZ();
+
+	calibrationRunning.unlock();
+	mutex.unlock();
+	return true;
+
+}
+
 //vracia cez smernik IMU data
 bool AdisInterface::getImuData(sensor_msgs::Imu *imu){
 
@@ -215,6 +248,7 @@ bool AdisInterface::getImuData(sensor_msgs::Imu *imu){
         return false;
 
 	bool success = readAxes(imu);
+	imu->angular_velocity.z -= z_offset;
 	mutex.unlock();
 	return success;
 
@@ -319,9 +353,9 @@ bool AdisInterface::readAxes(sensor_msgs::Imu *imu){
 	imu->header.stamp = ros::Time::now();
 
 			 //konverzia precitanych udajov
-	imu->angular_velocity.x = SCALE_GYRO * TWOCOMP14((((read_data[0] << 8) | read_data[1]) & 0x3FFF));
-	imu->angular_velocity.y = SCALE_GYRO * TWOCOMP14((((read_data[2] << 8) | read_data[3]) & 0x3FFF));
-	imu->angular_velocity.z = SCALE_GYRO * TWOCOMP14((((read_data[4] << 8) | read_data[5]) & 0x3FFF));
+	imu->angular_velocity.x = DEG2RAG(SCALE_GYRO * TWOCOMP14((((read_data[0] << 8) | read_data[1]) & 0x3FFF)));
+	imu->angular_velocity.y = DEG2RAG(SCALE_GYRO * TWOCOMP14((((read_data[2] << 8) | read_data[3]) & 0x3FFF)));
+	imu->angular_velocity.z = DEG2RAG(SCALE_GYRO * TWOCOMP14((((read_data[4] << 8) | read_data[5]) & 0x3FFF)));
 
 	imu->linear_acceleration.x = SCALE_AKCEL *TWOCOMP14((((read_data[6] << 8) | read_data[7]) & 0x3FFF));
 	imu->linear_acceleration.y = -1 * SCALE_AKCEL * TWOCOMP14((((read_data[8] << 8) | read_data[9]) & 0x3FFF));

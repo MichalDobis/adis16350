@@ -31,19 +31,19 @@ geometry_msgs::Vector3 MathematicsOperations::computeOrientationFromGyro(sensor_
 	double dt = (imu->header.stamp - last_time).toSec();
 	last_time = imu->header.stamp;
 
-	cartezianAngle.x += imu->angular_velocity.x * dt * PI_05;
+	cartezianAngle.x += imu->angular_velocity.x * dt;
 		// uhol[1] += gyro[1] * dt * M_PI/180;
 		if (imu->linear_acceleration.z < 0)
 		{
-			cartezianAngle.z += PI2 - (imu->angular_velocity.z * dt * PI_05);
+			cartezianAngle.z += PI2 - (imu->angular_velocity.z * dt);
 		 	//akcel[0] *= -1;
-			cartezianAngle.y += PI2 - (imu->angular_velocity.y * dt * PI_05);
+			cartezianAngle.y += PI2 - (imu->angular_velocity.y * dt);
 		 	imu->linear_acceleration.y *= -1;
 		 }
 		 else
 		 {
-		  	 cartezianAngle.z += imu->angular_velocity.z * dt * PI_05;
-		  	 cartezianAngle.y += imu->angular_velocity.y * dt * PI_05;
+		  	 cartezianAngle.z += imu->angular_velocity.z * dt;
+		  	 cartezianAngle.y += imu->angular_velocity.y * dt;
 		  }
 
 		return cartezianAngle;
