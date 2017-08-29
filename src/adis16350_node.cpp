@@ -128,12 +128,10 @@ private:
 
 	bool useComplementary;
 	bool useMovingAverage;
-<<<<<<< HEAD
-    bool ignoreXY;
-=======
-	bool compute_z_offset;
 
->>>>>>> 87dcf2415ab97d53801dd0c4c8457e80c700408c
+    bool ignoreXY;
+
+	bool compute_z_offset;
 
 	int statusCode;
 	bool runningCalibration;
