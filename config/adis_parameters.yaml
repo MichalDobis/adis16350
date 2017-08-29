@@ -1,7 +1,8 @@
 adis16350:
 
+#komunikacne parametre
+ port_name: /dev/ADIS
 #communication parameters
- port_name: /dev/ttyUSB1
  baudrate: 115200
  stop_bits: 1    #1 - stopBits 1  #2 - stopBits 2 #3 - stopBits 1.5 
  parity: 0       #0 - none #1 - odd parity #2 - even parity
@@ -11,7 +12,7 @@ adis16350:
  
  #povolit zapis do registrov pri starte, kvoli flash pamati je vhodne mat zapnute na false pri viacnasobnom zapinani
  #ak bude false, tak sa pri inite nebude zapisovat do registrov. Pouzitim kalibracnych servisov je mozne zapisovat.
- enable_write_to_registers: false
+ enable_write_to_registers: true
  
  #register SENS_AVG 0x38 0x39  - zapis pri inite
  digital_filtering: 6 #range 0-6
@@ -40,10 +41,12 @@ adis16350:
                      #1. bit = 1 - pouzije sa precisna kalibracia (dlha - treba nechat senzor cca 30 sekund vklude)
                      #2. bit = 1 - 2000 krat sa precita vzorka z Gyra Z a vypocita sa offset, ktory sa zapise do registra ZGYRO_OFF (asi najpresnejsie)
                      #nastavenim viacerych bitov na 1 je mozne kombinovat. Napr. pre hodnotu 5 (binarne 101) sa spusti kratka kalibracia a nasledne kalibracia Z gyra.
+
+ compute_z_offset: true
                      
 
  #covariance matrix (diagonal)
- pose_covariance_diagonal : [0.00001, 0.00001, 0.00005]
+ pose_covariance_diagonal : [0.00001, 0.00001, 0.0005]
  angular_velocity_covariance_diagonal: [0.0001, 0.0001, 0.0005]
  linear_acceleration_covariance_diagonal : [0.005, 0.005, 100000]
 

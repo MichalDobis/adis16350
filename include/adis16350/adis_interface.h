@@ -9,6 +9,7 @@
 
 #define TWOCOMP14(x) (((int16_t)(x)<0x2000)?(int16_t)(x):-(0x4000-(int16_t)(x)))
 #define TWOCOMP12(x) (((int16_t)(x)<0x0800)?(int16_t)(x):-(0x1000-(int16_t)(x)))
+#define DEG2RAG(x) 0.0174532925199433*(x)
 
 #define SUPPLY_OUT	0x02
 #define XGYRO_OUT	0x04
@@ -101,6 +102,7 @@ public:
 	bool autoCalibrate();							//rychla autokalibracia
 	bool calibrate();								//30 sekundova precizna kalibracia
 	bool calibrationGyroZ();						//rucne nastavenie offset pre gyro Z. Zrata 2000 vzoriek vypocita priemer a podla toho zapise do registra
+	bool computeOffset();
 	bool getImuData(sensor_msgs::Imu *imu);			//vracia precitane data
 
 
@@ -119,8 +121,11 @@ private:
 	double SCALE_GYRO;
 	double SCALE_AKCEL;
 
+	double z_offset;
+
 	bool readAxes(sensor_msgs::Imu *imu);					    //cita imu data zo zbernice
 	bool writeRegister(uint8_t reg, uint8_t hi, uint8_t lo);    //zapisuje do registra
 	bool readRegister(uint8_t reg, uint8_t *read_data);			//citanie z lubovolneho registra
 	bool checkRegister(uint8_t reg, uint8_t *controlled_data);  //porovna controlled_data z precitanymi datami
+	double meassureAverageZ();
 };
