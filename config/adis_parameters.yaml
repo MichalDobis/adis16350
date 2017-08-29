@@ -56,3 +56,4 @@ adis16350:
  frame_id: imu
  status_period: 0.5
  publish_rate: 150
+ ignore_xy: True

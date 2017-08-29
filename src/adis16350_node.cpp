@@ -35,7 +35,9 @@ public:
 		n.param<double>("using_akcel", usingAkcel, 0.02);
 		n.param<double>("status_period", status_period, 1);
 
-		diagnostic_.add("Wsg_50 Status", this, &Adis16350::diagnostics);
+        n.param<bool>("ignore_xy", ignoreXY, false);
+
+        diagnostic_.add("Wsg_50 Status", this, &Adis16350::diagnostics);
 		diagnostic_.setHardwareID("none");
 
 		imuPub = n.advertise<sensor_msgs::Imu>(topicName,100);
@@ -99,6 +101,14 @@ public:
 				operations->computeComplementary(imu);
 
 			imu.orientation = operations->createQuaternion();
+
+            if (ignoreXY){
+                imu.angular_velocity.x = 0;
+                imu.angular_velocity.y = 0;
+                imu.linear_acceleration.x = 0;
+                imu.linear_acceleration.y = 0;
+            }
+
 			imuPub.publish(imu);
 		}
 	}
@@ -114,6 +124,7 @@ private:
 
 	bool useComplementary;
 	bool useMovingAverage;
+    bool ignoreXY;
 
 	int statusCode;
 	bool runningCalibration;
@@ -394,6 +405,7 @@ private:
 int main(int argc, char **argv)
 {
 	//node init
+
 	ros::init(argc, argv, "adis16350");
 	ros::NodeHandle n;
 	sleep(1);
