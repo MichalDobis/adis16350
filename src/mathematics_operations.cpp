@@ -60,14 +60,19 @@ geometry_msgs::Vector3 MathematicsOperations::computeComplementary(sensor_msgs::
 	return cartezianAngle;
 }
 
+
 geometry_msgs::Quaternion MathematicsOperations::createQuaternion(){
 
 	return tf::createQuaternionMsgFromRollPitchYaw(cartezianAngle.x, cartezianAngle.y, cartezianAngle.z);
 }
-
 geometry_msgs::Quaternion MathematicsOperations::createQuaternion(geometry_msgs::Vector3 angle){
 
 	return tf::createQuaternionMsgFromRollPitchYaw(angle.x, angle.y,angle.z);
+}
+
+geometry_msgs::Quaternion MathematicsOperations::createQuaternion(double angle){
+
+	return tf::createQuaternionMsgFromRollPitchYaw(0, 0, angle);
 }
 
 geometry_msgs::Vector3 MathematicsOperations::getOrientation(){

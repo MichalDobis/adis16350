@@ -1,7 +1,7 @@
 adis16350:
 
 #komunikacne parametre
- port_name: /dev/ADIS
+ port_name: /dev/ADIS16350
 #communication parameters
  baudrate: 115200
  stop_bits: 1    #1 - stopBits 1  #2 - stopBits 2 #3 - stopBits 1.5 
@@ -12,7 +12,7 @@ adis16350:
  
  #povolit zapis do registrov pri starte, kvoli flash pamati je vhodne mat zapnute na false pri viacnasobnom zapinani
  #ak bude false, tak sa pri inite nebude zapisovat do registrov. Pouzitim kalibracnych servisov je mozne zapisovat.
- enable_write_to_registers: true
+ enable_write_to_registers: false
  
  #register SENS_AVG 0x38 0x39  - zapis pri inite
  digital_filtering: 6 #range 0-6
@@ -52,11 +52,11 @@ adis16350:
 
  #parameters for softver
  use_complementary_filter: True
- using_gyro: 0.98
- using_akcel: 0.02
+ using_gyro: 0.6
+ using_akcel: 0.4
  use_moving_average: False
  data_topic_name: imu_data
  frame_id: imu
  status_period: 0.5
  publish_rate: 150
- ignore_xy: True
+ ignore_xy: False

@@ -99,19 +99,22 @@ public:
 						return;
 				}
 
+
 			vector = operations->computeOrientationFromGyro(&imu);
+
 
 			if (useComplementary)
 				operations->computeComplementary(imu);
 
+
+			if (ignoreXY){
+				imu.orientation = operations->createQuaternion(vector.z);
+				//imu.orientation.x = 0;
+				//imu.orientation.y = 0;
+
+			} else
 			imu.orientation = operations->createQuaternion();
 
-            if (ignoreXY){
-                imu.angular_velocity.x = 0;
-                imu.angular_velocity.y = 0;
-                imu.linear_acceleration.x = 0;
-                imu.linear_acceleration.y = 0;
-            }
 
 			imuPub.publish(imu);
 		}

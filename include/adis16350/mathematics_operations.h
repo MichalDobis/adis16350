@@ -17,6 +17,7 @@ public:
 
 	geometry_msgs::Quaternion createQuaternion();
 	geometry_msgs::Quaternion createQuaternion(geometry_msgs::Vector3 angle);
+	geometry_msgs::Quaternion createQuaternion(double angle);
 	static void createCovarianceMatrix(sensor_msgs::Imu *imu);
 	static void createCovarianceMatrix(sensor_msgs::Imu *imu, std::vector<double> pose, std::vector<double> angular_velocity, std::vector<double> linear_acceleration);
 
